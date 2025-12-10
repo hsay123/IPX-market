@@ -111,10 +111,20 @@ export async function GET(req: NextRequest) {
           message: "Database not initialized",
         })
       }
-      throw dbError
+      // Return graceful error for any database error
+      console.error("[v0] Database error:", dbError.message)
+      return NextResponse.json({
+        success: true,
+        verified: false,
+        message: "Unable to verify transaction at this time",
+      })
     }
   } catch (error: any) {
     console.error("[v0] Verification check error:", error)
-    return NextResponse.json({ error: "Failed to check verification", details: error.message }, { status: 500 })
+    return NextResponse.json({
+      success: false,
+      verified: false,
+      message: "Verification service temporarily unavailable",
+    })
   }
 }

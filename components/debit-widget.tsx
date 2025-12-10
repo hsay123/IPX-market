@@ -133,13 +133,6 @@ export function DebitWidget({
       setTxHash(hash)
       setStatus("success")
       onSuccess?.(hash)
-
-      // Verify transaction on backend
-      fetch("/api/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ txHash: hash, from: account, to: recipient, amount, memo }),
-      }).catch(console.error)
     } catch (err: any) {
       setStatus("error")
       const errMsg = err.message || "Transaction failed"

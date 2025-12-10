@@ -5,6 +5,7 @@ import { useWeb3 } from "@/lib/web3"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
+import { executePurchase } from "@/lib/contract-utils"
 
 interface PurchaseButtonProps {
   itemId: number
@@ -20,9 +21,11 @@ export function PurchaseButton({ itemId, itemTitle, itemType, price, disabled, c
   const router = useRouter()
   const [isPurchasing, setIsPurchasing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [txHash, setTxHash] = useState<string | null>(null)
 
   const handlePurchase = async () => {
     setError(null)
+    setTxHash(null)
 
     // Connect wallet if not connected
     if (!account) {
@@ -85,37 +88,19 @@ export function PurchaseButton({ itemId, itemTitle, itemType, price, disabled, c
         throw new Error(`Invalid contract address format: ${contractAddress}`)
       }
 
-      const valueInWei = "0x" + Math.floor(0.001 * 1e18).toString(16)
+      const result = await executePurchase(ethereum, account, itemId, itemTitle)
 
-      // Send transaction
-      const transactionHash = await ethereum.request({
-        method: "eth_sendTransaction",
-        params: [
-          {
-            from: account,
-            to: contractAddress,
-            value: valueInWei,
-          },
-        ],
-      })
+      if (!result.success) {
+        throw new Error(result.error || "Purchase failed")
+      }
 
-      console.log("[v0] Transaction sent:", transactionHash)
+      setTxHash(result.txHash!)
 
-      // Record transaction in background
-      fetch("/api/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          txHash: transactionHash,
-          itemType,
-          itemId,
-          buyerAddress: account,
-          itemTitle,
-          price: valueInWei,
-        }),
-      }).catch((err) => console.error("[v0] Failed to record transaction:", err))
-
-      router.push(`/order/success?tx=${transactionHash}&type=${itemType}&buyer=${account}`)
+      // Redirect to success page with transaction details
+      // No need to wait for API verification - blockchain is the source of truth
+      router.push(
+        `/order/success?tx=${result.txHash}&type=${itemType}&itemId=${itemId}&buyer=${account}&itemTitle=${encodeURIComponent(itemTitle)}`,
+      )
     } catch (err: any) {
       console.error("[v0] Purchase error:", err)
       setError(err.message || "Transaction failed")
@@ -144,6 +129,22 @@ export function PurchaseButton({ itemId, itemTitle, itemType, price, disabled, c
       {error && (
         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
           <div className="text-red-400 text-sm">{error}</div>
+        </div>
+      )}
+
+      {txHash && (
+        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+          <div className="text-green-400 text-sm">
+            ✅ Purchase successful!{" "}
+            <a
+              href={`${process.env.NEXT_PUBLIC_STORYSCAN || "https://aeneid.storyscan.io"}/tx/${txHash}`}
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              View transaction
+            </a>
+          </div>
         </div>
       )}
     </div>

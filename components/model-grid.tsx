@@ -233,19 +233,19 @@ export function ModelGrid({ category, search }: ModelGridProps = {}) {
           key={model.id}
           className="relative rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0" />
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 text-background" />
 
-          <div className="relative p-6">
+          <div className="text-sm mb-4 text-pretty line-clamp-2 text-black text-primary">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Brain className="h-5 w-5 text-accent" />
-                <span className="text-xs font-medium text-muted-foreground uppercase">{model.category}</span>
+                <span className="text-sm mb-4 text-pretty line-clamp-2 text-black">{model.category}</span>
               </div>
               {model.accuracy && <Badge variant="secondary">{model.accuracy}% Accuracy</Badge>}
             </div>
 
             <h3 className="text-lg font-bold mb-2 text-balance line-clamp-2">{model.name}</h3>
-            <p className="text-sm text-muted-foreground mb-4 text-pretty line-clamp-2">{model.description}</p>
+            <p className="text-sm mb-4 text-pretty line-clamp-2 text-black text-background">{model.description}</p>
 
             <div className="flex flex-wrap gap-2 mb-4">
               <Badge variant="outline">{model.framework}</Badge>

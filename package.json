@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@google-cloud/aiplatform": "6.0.0",
     "@hookform/resolvers": "^3.10.0",
     "@neondatabase/serverless": "latest",
     "@radix-ui/react-accordion": "latest",

@@ -89,7 +89,24 @@ export async function POST(request: NextRequest) {
       RETURNING *
     `
 
-    return NextResponse.json({ dataset: dataset[0] }, { status: 201 })
+    const createdDataset = dataset[0]
+
+    if (previewUrl) {
+      // Fire and forget - don't wait for analysis
+      fetch(new URL("/api/analyze/image", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageUrl: previewUrl,
+          itemId: createdDataset.id,
+          itemType: "dataset",
+        }),
+      }).catch((error) => {
+        console.error("[v0] Failed to queue Vertex AI analysis:", error)
+      })
+    }
+
+    return NextResponse.json({ dataset: createdDataset }, { status: 201 })
   } catch (error) {
     console.error("[v0] Error creating dataset:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

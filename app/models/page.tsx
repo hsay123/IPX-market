@@ -16,7 +16,7 @@ export default function ModelsPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#05000d" }}>
+    <div className="min-h-screen bg-background border-0 text-background" style={{ backgroundColor: "#05000d" }}>
       <Navbar />
 
       <div className="container mx-auto px-4 pt-24 pb-12">

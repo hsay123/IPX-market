@@ -31,7 +31,7 @@ export default function HomePage() {
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white">
               The Future of AI
               <br />
-              <span className="text-[#602fc0]">Data Marketplace</span>
+              <span className="text-[#602fc0] font-serif">Data Marketplace</span>
             </h1>
 
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">

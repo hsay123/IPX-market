@@ -1,5 +1,4 @@
 # Google Vertex AI Integration - IPX/StoryPix Market
-
 ## Section 1: Overview
 
 The IPX/StoryPix Market leverages **Google Vertex AI** as a backend intelligence layer to enhance visual storytelling capabilities without disrupting the user experience. Vertex AI processes dataset and AI model preview images to generate contextual narratives, improved descriptions, and semantic metadata.

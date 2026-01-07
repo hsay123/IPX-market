@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sql } from "@/lib/db"
+import { createOrUpdateUser, saveMetadata, saveImageRecord } from "@/lib/firestore"
+import { Timestamp } from "firebase/firestore"
 
 export async function GET(request: NextRequest) {
   try {
@@ -62,6 +64,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
+    createOrUpdateUser(ownerWallet, {
+      id: ownerWallet,
+      wallet: ownerWallet,
+    }).catch((error) => {
+      console.error("[v0] Failed to create Firebase user record:", error)
+    })
+
     // Insert dataset
     const dataset = await sql`
       INSERT INTO datasets (
@@ -92,8 +101,33 @@ export async function POST(request: NextRequest) {
     const createdDataset = dataset[0]
 
     if (previewUrl) {
-      // Fire and forget - don't wait for analysis
-      fetch(new URL("/api/analyze/image", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"), {
+      // Save to Firestore and trigger Vertex AI (non-blocking)
+      saveImageRecord({
+        id: `dataset_${createdDataset.id}_preview`,
+        url: previewUrl,
+        uploadTimestamp: Timestamp.now(),
+        itemId: createdDataset.id,
+        itemType: "dataset",
+        ownerWallet,
+      }).catch((error) => {
+        console.error("[v0] Failed to save image record:", error)
+      })
+
+      // Save initial metadata
+      saveMetadata({
+        itemId: createdDataset.id,
+        itemType: "dataset",
+        tags: [],
+        caption: description,
+        safetyStatus: "pending",
+      }).catch((error) => {
+        console.error("[v0] Failed to save metadata:", error)
+      })
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+      const analyzeUrl = new URL("/api/analyze/image", appUrl).toString()
+
+      fetch(analyzeUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

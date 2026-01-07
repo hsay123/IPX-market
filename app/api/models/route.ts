@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sql } from "@/lib/db"
+import { createOrUpdateUser, saveMetadata } from "@/lib/firestore"
 
 export async function GET(request: NextRequest) {
   try {
@@ -84,6 +85,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
+    createOrUpdateUser(ownerWallet, {
+      id: ownerWallet,
+      wallet: ownerWallet,
+    }).catch((error) => {
+      console.error("[v0] Failed to create Firebase user record:", error)
+    })
+
     // Insert model
     const model = await sql`
       INSERT INTO ai_models (
@@ -114,6 +122,16 @@ export async function POST(request: NextRequest) {
       )
       RETURNING *
     `
+
+    saveMetadata({
+      itemId: model[0].id,
+      itemType: "model",
+      tags: [],
+      caption: description,
+      safetyStatus: "pending",
+    }).catch((error) => {
+      console.error("[v0] Failed to save metadata:", error)
+    })
 
     return NextResponse.json({ model: model[0] }, { status: 201 })
   } catch (error) {

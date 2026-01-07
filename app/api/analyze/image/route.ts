@@ -1,6 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sql } from "@/lib/db"
 import { analyzeImageWithVertexAI } from "@/lib/vertex-ai"
+import { updateVertexAiAnalysis } from "@/lib/firestore"
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { status: 200 })
+}
+
+export async function GET(request: NextRequest) {
+  return NextResponse.json({ error: "Use POST method to analyze images" }, { status: 200 })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,11 +30,22 @@ export async function POST(request: NextRequest) {
     try {
       await sql`UPDATE ${sql.unsafe(table)} SET vertex_ai_status = 'processing' WHERE id = ${itemId}`
     } catch (error) {
-      console.log("[v0] Table not initialized yet, skipping status update")
+      console.log("[v0] Table not initialized yet, skipping Neon status update")
     }
 
     const analysis = await analyzeImageWithVertexAI(imageUrl)
 
+    // Update Firestore (new)
+    updateVertexAiAnalysis(itemId, itemType, {
+      story: analysis.cinemaStory,
+      caption: analysis.improvedCaption,
+      tags: analysis.semanticTags,
+      confidence: analysis.confidence,
+    }).catch((error) => {
+      console.error("[v0] Failed to save analysis to Firestore:", error)
+    })
+
+    // Update Neon (existing)
     try {
       await sql`
         UPDATE ${sql.unsafe(table)}

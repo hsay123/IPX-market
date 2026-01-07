@@ -1,9 +1,14 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google"
+
 import "./globals.css"
 import { Web3Provider } from "@/lib/web3"
 import { StoryProvider } from "@/app/providers"
+import { Space_Grotesk, JetBrains_Mono, Inter as V0_Font_Inter, Playfair_Display as V0_Font_Playfair_Display } from 'next/font/google'
+
+// Initialize fonts
+const _inter = V0_Font_Inter({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700","800","900"] })
+const _playfairDisplay = V0_Font_Playfair_Display({ subsets: ['latin'], weight: ["400","500","600","700","800","900"] })
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -28,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-serif antialiased`}>
         <StoryProvider>
           <Web3Provider>{children}</Web3Provider>
         </StoryProvider>

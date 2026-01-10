@@ -95,15 +95,20 @@ export function PurchaseButton({ itemId, itemTitle, itemType, price, disabled, c
       }
 
       setTxHash(result.txHash!)
-
-      // Redirect to success page with transaction details
-      // No need to wait for API verification - blockchain is the source of truth
       router.push(
         `/order/success?tx=${result.txHash}&type=${itemType}&itemId=${itemId}&buyer=${account}&itemTitle=${encodeURIComponent(itemTitle)}`,
       )
     } catch (err: any) {
+      let errorMessage = err.message || "Transaction failed"
+
+      if (err.code === 4001 || err.reason === "rejected") {
+        errorMessage = "Transaction rejected. Please approve the transaction in MetaMask to complete your purchase."
+      } else if (err.message?.includes("MetaMask")) {
+        errorMessage = "MetaMask error: " + err.message
+      }
+
       console.error("[v0] Purchase error:", err)
-      setError(err.message || "Transaction failed")
+      setError(errorMessage)
     } finally {
       setIsPurchasing(false)
     }

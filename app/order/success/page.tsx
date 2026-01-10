@@ -231,20 +231,20 @@ export default function OrderSuccessPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <Button variant="outline" onClick={copyTxHash}>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy Transaction Link
+              <Copy className="h-4 w-4 mr-2 text-black" />
+              <span className="text-black">Copy Transaction Link</span>
             </Button>
             <Button variant="outline" onClick={handleEmailReceipt}>
-              <Mail className="h-4 w-4 mr-2" />
-              Email Receipt
+              <Mail className="h-4 w-4 mr-2 text-black" />
+              <span className="text-black">Email Receipt</span>
             </Button>
           </div>
 
           <div className="text-center">
             <Link href="/explore">
               <Button variant="outline" size="lg">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Return to Marketplace
+                <ArrowLeft className="h-4 w-4 mr-2 text-black" />
+                <span className="text-black">Return to Marketplace</span>
               </Button>
             </Link>
           </div>

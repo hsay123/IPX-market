@@ -105,6 +105,7 @@ export async function executePurchase(
     // Send transaction - 0.001 IP
     const tx = await contract.recordAction(dataHash, {
       value: ethers.parseEther("0.001"),
+      gasLimit: ethers.toBigInt(500000), // Fixed gas limit for recordAction
     })
 
     console.log("[v0] Transaction submitted:", tx.hash)

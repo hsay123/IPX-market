@@ -22,6 +22,7 @@ export default function OrderSuccessPage() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [remainingDownloads, setRemainingDownloads] = useState<number | null>(null)
+  const [isCopied, setIsCopied] = useState(false)
 
   const handleDownload = async () => {
     setIsDownloading(true)
@@ -90,6 +91,8 @@ export default function OrderSuccessPage() {
   const copyTxHash = () => {
     if (txHash) {
       navigator.clipboard.writeText(txHash)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
       toast({
         title: "Copied!",
         description: "Transaction hash copied to clipboard",
@@ -230,9 +233,15 @@ export default function OrderSuccessPage() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <Button variant="outline" onClick={copyTxHash}>
-              <Copy className="h-4 w-4 mr-2 text-black" />
-              <span className="text-black">Copy Transaction Link</span>
+            <Button
+              variant="outline"
+              onClick={copyTxHash}
+              className={`transition-all duration-300 ${isCopied ? "scale-105 bg-green-500/10 border-green-500" : ""}`}
+            >
+              <Copy
+                className={`h-4 w-4 mr-2 text-black transition-transform duration-300 ${isCopied ? "rotate-12 scale-110" : ""}`}
+              />
+              <span className="text-black">{isCopied ? "Copied!" : "Copy Transaction Link"}</span>
             </Button>
             <Button variant="outline" onClick={handleEmailReceipt}>
               <Mail className="h-4 w-4 mr-2 text-black" />

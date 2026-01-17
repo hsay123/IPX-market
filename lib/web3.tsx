@@ -27,24 +27,6 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false)
 
   useEffect(() => {
-    // Check if wallet is already connected
-    const checkConnection = async () => {
-      if (typeof window.ethereum !== "undefined") {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-          })
-          if (accounts.length > 0) {
-            setAccount(accounts[0])
-          }
-        } catch (error) {
-          console.error("Error checking connection:", error)
-        }
-      }
-    }
-
-    checkConnection()
-
     // Listen for account changes
     if (typeof window.ethereum !== "undefined") {
       window.ethereum.on("accountsChanged", (accounts: string[]) => {
@@ -64,6 +46,11 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   }, [])
 
   const connect = async () => {
+    if (isConnecting) {
+      console.warn("[v0] Wallet connection already in progress")
+      return
+    }
+
     if (typeof window.ethereum === "undefined") {
       alert("Please install MetaMask to connect your wallet!")
       return
@@ -82,9 +69,14 @@ export function Web3Provider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ wallet_address: accounts[0] }),
       })
-    } catch (error) {
-      console.error("Error connecting wallet:", error)
-      alert("Failed to connect wallet. Please try again.")
+    } catch (error: any) {
+      if (error?.code === 4001 || error?.message?.includes("rejected")) {
+        console.log("[v0] User rejected wallet connection")
+        // Don't show alert for user rejection - this is expected behavior
+      } else {
+        console.error("Error connecting wallet:", error)
+        alert("Failed to connect wallet. Please try again.")
+      }
     } finally {
       setIsConnecting(false)
     }

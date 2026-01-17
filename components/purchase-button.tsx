@@ -30,7 +30,12 @@ export function PurchaseButton({ itemId, itemTitle, itemType, price, disabled, c
     // Connect wallet if not connected
     if (!account) {
       await connect()
-      return
+      // After connection, check if account was set
+      if (!account) {
+        setError("Wallet connection failed. Please try again.")
+        return
+      }
+      // Continue with purchase after successful connection
     }
 
     setIsPurchasing(true)

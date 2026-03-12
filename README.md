@@ -1,429 +1,677 @@
-# IPX Market - StoryPix Marketplace
-
-*Blockchain-Powered IP Marketplace with AI-Enhanced Discovery*
+# IPX Market: Decentralized AI Dataset Marketplace
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://v0-storypixmarket-an.vercel.app)
-[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2016-black?style=for-the-badge)](https://nextjs.org)
-[![Blockchain](https://img.shields.io/badge/Blockchain-Story%20Protocol-purple?style=for-the-badge)](https://story.foundation)
+[![Built with Next.js 16](https://img.shields.io/badge/Built%20with-Next.js%2016-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
+[![Story Protocol](https://img.shields.io/badge/IP%20Layer-Story%20Protocol-purple?style=for-the-badge)](https://story.foundation)
+[![Firebase](https://img.shields.io/badge/Database-Firebase%20Firestore-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com)
 
-## 🎯 Overview
+## Overview
 
-**IPX Market** is a decentralized marketplace for buying and selling datasets and AI models with blockchain-verified ownership, AI-powered metadata discovery, and encrypted access control. Creators upload digital assets, Story Protocol registers them as on-chain IP, and buyers access via one-time download links verified by blockchain transactions.
+**IPX Market** is a decentralized marketplace for AI datasets that combines **Story Protocol** for provable IP ownership with **Google Vertex AI** for intelligent metadata extraction and NLP-powered discovery. Creators upload datasets with automatic AI-generated descriptions, register ownership on-chain, define custom licenses, and earn passive income through automated royalty distribution.
 
-**Live Demo:** [https://v0-storypixmarket-an.vercel.app](https://v0-storypixmarket-an.vercel.app)
+### Key Problem Solved
+- ❌ **No proof of ownership** → ✅ Story Protocol provides permanent, immutable ownership records
+- ❌ **No licensing standards** → ✅ Automated on-chain licensing with royalty splits
+- ❌ **Dataset theft** → ✅ Blockchain verification prevents unauthorized copying
+- ❌ **Fragmented discovery** → ✅ NLP-powered semantic search finds relevant datasets
 
 ---
 
-## 🏗️ System Architecture
+## Live Demo
 
-### High-Level Architecture Diagram
+**🚀 [https://v0-storypixmarket-an.vercel.app](https://v0-storypixmarket-an.vercel.app)**
+
+### Try These Features:
+1. **Upload a Dataset** → `/upload/dataset` (AI auto-generates metadata)
+2. **Browse Marketplace** → `/explore` (Search, filter, view recommendations)
+3. **Purchase Dataset** → Click any dataset, connect MetaMask, complete transaction
+4. **Admin Analytics** → `/admin` (View Vertex AI analysis results)
+
+---
+
+## System Architecture
+
+### High-Level Data Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         FRONTEND LAYER                               │
-│  ┌──────────────┬──────────────┬──────────────┬──────────────┐      │
-│  │  Explore     │  Upload      │  Dashboard   │  Marketplace │      │
-│  │  Page        │  Dataset/    │  Purchase    │  Browse      │      │
-│  │              │  Model       │  History     │              │      │
-│  └──────────────┴──────────────┴──────────────┴──────────────┘      │
-│                              │                                       │
-└──────────────────────────────┼───────────────────────────────────────┘
-                               │
-                ┌──────────────┴──────────────┐
-                │                             │
-┌───────────────▼──────────────┐  ┌──────────▼──────────────────┐
-│   API LAYER (Route Handlers)  │  │  Web3/Blockchain Layer     │
-│  ┌───────────────────────────┤  │  ┌──────────────────────┐   │
-│  │ /api/datasets             │  │  │  MetaMask Wallet     │   │
-│  │ /api/models               │  │  │  Contract Executor   │   │
-│  │ /api/ipfs/upload          │  │  │  Transaction Builder │   │
-│  │ /api/analyze/image        │  │  │  Block Verification  │   │
-│  │ /api/search/nlp-query     │  │  └──────────────────────┘   │
-│  │ /api/search/recommendations
-│  │ /api/purchase             │  │
-│  │ /api/download             │  │
-│  │ /api/story/register       │  │
-│  │ /api/nft/mint             │  │
-│  └───────────────────────────┤  │
-└───────────────┬──────────────┘  │
-                │                 │
-        ┌───────▼─────────┐       │
-        │                 │       │
-┌───────▼───────────┐     │   ┌───▼────────────────────┐
-│ DATABASE LAYER    │     │   │ BLOCKCHAIN NETWORKS    │
-│ ┌───────────────┐ │     │   │ ┌────────────────────┐ │
-│ │ Neon          │ │     │   │ │ Story Protocol     │ │
-│ │ PostgreSQL    │◄┼─────┼───┤ │ IP Asset Registry  │ │
-│ └───────────────┘ │     │   │ │ License Config     │ │
-│ ┌───────────────┐ │     │   │ └────────────────────┘ │
-│ │ Firebase      │ │     │   │ ┌────────────────────┐ │
-│ │ Firestore     │ │     │   │ │ Ethereum/Sepolia   │ │
-│ └───────────────┘ │     │   │ │ (Contract Network) │ │
-└───────────────────┘     │   └────────────────────────┘
-                          │
-                          │
-        ┌─────────────────┴──────────────┐
-        │                                │
-    ┌───▼────────────────┐      ┌────────▼──────────┐
-    │ AI/ML SERVICES     │      │ STORAGE SERVICES  │
-    │ ┌────────────────┐ │      │ ┌────────────────┐ │
-    │ │ Google Vertex  │ │      │ │ IPFS           │ │
-    │ │ AI (Gemini)    │ │      │ │ Content Hash   │ │
-    │ │ - Image        │ │      │ │ Distribution   │ │
-    │ │   Analysis     │ │      │ └────────────────┘ │
-    │ │ - Story Gen    │ │      │ ┌────────────────┐ │
-    │ │ - Tag Extract  │ │      │ │ Vercel Blob    │ │
-    │ │ - NLP Search   │ │      │ │ Downloads      │ │
-    │ └────────────────┘ │      │ └────────────────┘ │
-    └────────────────────┘      └───────────────────┘
+│                        IPX MARKET SYSTEM ARCHITECTURE                │
+└─────────────────────────────────────────────────────────────────────┘
+
+                            FRONTEND (Next.js 16 React)
+                    ┌──────────────────────────────────┐
+                    │  Pages:                          │
+                    │  • /upload/dataset               │
+                    │  • /explore (Search & Browse)    │
+                    │  • /datasets/[id] (Detail)       │
+                    │  • /purchases (History)          │
+                    │  • /order/success (Checkout)     │
+                    │  • /admin (Analytics Dashboard)  │
+                    └──────────────────────────────────┘
+                              │
+                    ┌─────────┴──────────┐
+                    ▼                    ▼
+    ┌────────────────────────┐  ┌─────────────────────┐
+    │   API LAYER            │  │  CLIENT STATE       │
+    │  (Next.js Route        │  │  • Wallet Connect   │
+    │   Handlers)            │  │  • User Session     │
+    │                        │  │  • Cart/Favorites   │
+    │  30+ REST Endpoints:   │  └─────────────────────┘
+    │  • /api/datasets       │
+    │  • /api/models         │
+    │  • /api/purchase       │
+    │  • /api/download       │
+    │  • /api/analyze/image  │
+    │  • /api/search/*       │
+    │  • /api/ipfs/*         │
+    │  • /api/nft/mint       │
+    │  • /api/story/*        │
+    └────────────────────────┘
+            │         │         │
+    ┌───────┴─────┬───┴──────┬──┴────────┐
+    ▼             ▼          ▼           ▼
+┌────────┐  ┌────────────┐ ┌──────────┐ ┌──────────┐
+│ IPFS   │  │ Blockchain │ │ Firebase │ │ Vertex   │
+│ (Files)│  │ (Story     │ │ Firestore│ │ AI       │
+│        │  │ Protocol/  │ │ (Metadata│ │ (NLP,    │
+│        │  │ Payments)  │ │ Search)  │ │ Image    │
+│        │  │            │ │          │ │ Analysis)│
+└────────┘  └────────────┘ └──────────┘ └──────────┘
+
+
+                        DATA FLOW DIAGRAM
+
+Creator Upload Flow:
+    Upload Form → IPFS Upload → Vertex AI Analysis → Firebase Save → 
+    Story IP Register → Display on Marketplace
+
+Buyer Purchase Flow:
+    Browse/Search → Add to Cart → MetaMask Connect → 
+    Smart Contract Execute → Blockchain Verify → Generate Download Link
+
+Recommendation Engine:
+    User Views → Log Behavior → NLP Analysis of Tags → 
+    Semantic Similarity Calculate → Fetch Similar Items
 ```
 
-### Data Flow Architecture
+### Architecture Layers
 
-```
-UPLOAD FLOW:
-┌─────────────┐     ┌────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Creator   │────▶│   Upload   │────▶│   IPFS/Blob  │────▶│  Database   │
-│   Upload    │     │   API      │     │   Storage    │     │  (Neon +    │
-│   Dataset   │     │            │     │              │     │  Firebase)  │
-└─────────────┘     └────────────┘     └──────────────┘     └─────────────┘
-                            │                                       │
-                            └──────────────────────┬────────────────┘
-                                                   │
-                            ┌──────────────────────▼───────────────┐
-                            │                                      │
-                    ┌───────▼────────┐                ┌────────────▼──────┐
-                    │ Vertex AI       │                │  Story Protocol    │
-                    │ Analysis        │                │  IP Registration   │
-                    │ (Async)         │                │  (NFT Mint)        │
-                    └─────────────────┘                └────────────────────┘
+#### 1. **Presentation Layer (Frontend)**
+- **Framework:** Next.js 16 (React 19.2, TypeScript)
+- **UI Components:** shadcn/ui (Radix UI + Tailwind CSS)
+- **Pages:**
+  - Dashboard: `/` (Featured datasets/models)
+  - Upload: `/upload/dataset`, `/upload/model`
+  - Marketplace: `/explore` (Browse & search)
+  - Detail: `/datasets/[id]`, `/models/[id]` (Full info + purchase)
+  - Transactions: `/purchases` (User's purchase history)
+  - Checkout: `/order/success` (Payment confirmation)
+  - Admin: `/admin` (Vertex AI analysis viewer)
 
-PURCHASE FLOW:
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
-│   Buyer     │────▶│   MetaMask   │────▶│   Smart Contract│────▶│   Download   │
-│  Purchase   │     │   Connect &  │     │   Execute TX    │     │   Link Gen   │
-│   Dataset   │     │   Approve TX │     │   (Gas Fee)     │     │   (One-time) │
-└─────────────┘     └──────────────┘     └─────────────────┘     └──────────────┘
-                                                  │
-                                        ┌─────────▼──────────┐
-                                        │   Blockchain       │
-                                        │   Verification     │
-                                        │   (TX Hash)        │
-                                        └────────────────────┘
+#### 2. **API Layer (Backend)**
+- **30+ REST Endpoints** organized by domain:
 
-DISCOVERY FLOW:
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
-│   User      │────▶│   NLP Query  │────▶│   Similarity    │────▶│   Results    │
-│   Search    │     │   Analysis   │     │   Scoring       │     │   (Ranked)   │
-│   (Natural) │     │   (Vertex AI)│     │   (Tag Match)   │     │              │
-└─────────────┘     └──────────────┘     └─────────────────┘     └──────────────┘
-```
+| Domain | Endpoints | Purpose |
+|--------|-----------|---------|
+| **Datasets** | GET/POST `/api/datasets`, GET `/api/datasets/[id]` | CRUD operations |
+| **Models** | GET/POST `/api/models`, GET `/api/models/[id]` | Model management |
+| **Search** | POST `/api/search/nlp-query`, GET `/api/search/recommendations` | NLP search + recommendations |
+| **Marketplace** | POST `/api/purchase`, GET `/api/orders`, GET `/api/download` | Purchase flow |
+| **Blockchain** | POST `/api/nft/mint`, POST `/api/story/register`, POST `/api/ip/register` | IP registration |
+| **Storage** | POST `/api/ipfs/upload` | File hosting |
+| **AI** | POST `/api/analyze/image`, POST `/api/admin/test-vertex-ai` | Analysis & testing |
+| **Utility** | POST `/api/setup`, POST `/api/email/receipt` | Configuration & notifications |
+
+#### 3. **Service Layer (Utilities)**
+- **Blockchain:** `lib/blockchain.ts`, `lib/web3.tsx`, `lib/contract-utils.ts`
+- **AI/NLP:** `lib/vertex-ai.ts`, `lib/nlp-utils.ts`
+- **Database:** `lib/db.ts` (Neon PostgreSQL), `lib/firestore.ts` (Firebase)
+- **Storage:** `lib/story-protocol.ts` (IP registration)
+
+#### 4. **Data Layer (Databases)**
+- **Primary DB:** Neon PostgreSQL
+  - Tables: `datasets`, `models`, `users`, `orders`, `download_tickets`, `story_transactions`
+  - Features: Full-text search, RLS-ready, blockchain columns
+  
+- **Secondary DB:** Firebase Firestore
+  - Collections: `users`, `images`, `stories`, `metadata`
+  - Purpose: Metadata backup, real-time sync, global scale
+  
+- **File Storage:** IPFS (decentralized)
+  - Stores: Dataset files, models, preview images
+  - Features: Content-addressed, permanent, distributed
+
+#### 5. **Blockchain Layer**
+- **IP Registration:** Story Protocol (Aeneid testnet)
+  - Register datasets with permanent proof
+  - Create licenses (commercial, research, paid-access)
+  - Track derivatives and royalties
+  
+- **Payments:** Aeneid testnet native asset (IP)
+  - Transaction cost: 0.001 IP (~$0.01)
+  - Verification: One-time download links with hashes
+  
+- **Web3 Connection:** MetaMask (RainbowKit)
+  - Account management
+  - Transaction signing
+  - Network switching
+
+#### 6. **AI/Intelligence Layer**
+- **Image Analysis:** Google Vertex AI Gemini Vision
+  - Auto-generates cinematic stories from dataset preview images
+  - Extracts semantic tags (AI, medical, finance, etc.)
+  - Calculates quality confidence scores
+  
+- **NLP Search:** Vertex AI Gemini Text API
+  - Parses natural language queries
+  - Extracts intent and entities
+  - Returns semantically relevant results
+  
+- **Recommendations:** Semantic similarity
+  - Compares user viewing history
+  - Matches with Vertex AI tags
+  - Delivers personalized dataset suggestions
 
 ---
 
-## 🛠️ Tech Stack
+## Technology Stack
 
 ### Frontend
-- **Framework:** Next.js 16 with App Router
-- **UI Library:** Shadcn/UI + Radix UI
-- **Styling:** Tailwind CSS v4
-- **State Management:** React Context + TanStack Query
-- **Web3:** Wagmi + RainbowKit + Ethers.js
+- **Framework:** Next.js 16.0.10 (App Router, React Server Components)
+- **UI Library:** shadcn/ui + Tailwind CSS v4
+- **Forms:** React Hook Form + Zod validation
+- **Charts:** Recharts
+- **Web3:** wagmi + RainbowKit + ethers.js v6
+- **HTTP:** SWR for data fetching & caching
+- **Animation:** Tailwind CSS animations
+- **3D Graphics:** Three.js + React Three Fiber
 
 ### Backend
-- **Runtime:** Next.js API Routes (Vercel serverless)
+- **Runtime:** Node.js via Vercel Functions (serverless)
 - **Database:** 
-  - Neon (PostgreSQL) - Primary data store
-  - Firebase Firestore - Backup/fallback storage
-- **File Storage:** IPFS + Vercel Blob
-
-### AI/ML
-- **Image Analysis:** Google Vertex AI (Gemini Vision)
-- **NLP Search:** Vertex AI Text Analysis
-- **Embeddings:** Vertex AI Embeddings
+  - Neon PostgreSQL (primary relational data)
+  - Firebase Firestore (secondary metadata & backup)
+- **File Storage:** IPFS (decentralized)
+- **AI Services:** Google Cloud Vertex AI
+- **Authentication:** Blockchain wallet (MetaMask)
 
 ### Blockchain
-- **IP Management:** Story Protocol
-- **Network:** Ethereum Sepolia (testnet)
-- **Wallet:** MetaMask
+- **IP Registration:** Story Protocol (Aeneid testnet)
+- **Smart Contracts:** Story Aeneid contracts (pre-deployed)
+- **Wallet Connection:** RainbowKit + wagmi
+- **Network:** Story Aeneid testnet
+
+### DevOps
+- **Hosting:** Vercel (auto-deploy from Git)
+- **CI/CD:** Vercel Git integration
+- **Monitoring:** Vercel Analytics + custom logging
 
 ---
 
-## 🚀 Features
+## Database Schema
 
-### For Creators
-- **Upload Datasets/Models** - With preview images and metadata
-- **Blockchain IP Registration** - Automatic Story Protocol registration
-- **Revenue Tracking** - Monitor sales and downloads
-- **NFT Minting** - Create verifiable asset NFTs
-- **License Configuration** - Define usage rights via Story Protocol
+### PostgreSQL Tables
 
-### For Buyers
-- **Smart Discovery** - NLP-powered natural language search
-- **Semantic Recommendations** - AI-suggested similar assets
-- **Secure Purchase** - Blockchain-verified transactions
-- **One-Time Downloads** - Cryptographically secure download links
-- **Transaction Verification** - Transparent on-chain proof
+```sql
+-- Core entities
+datasets (id, title, description, preview_url, owner_id, price, category)
+models (id, name, description, file_url, owner_id, downloads)
+users (id, wallet_address, username, email, created_at)
 
-### For Administrators
-- **Analytics Dashboard** - Sales, views, revenue metrics
-- **Vertex AI Analysis Viewer** - Generated stories and metadata
-- **Manual Testing Tools** - Test NLP and AI features
-- **Order Management** - Track all transactions
+-- Marketplace
+orders (id, dataset_id, buyer_id, tx_hash, status, amount, created_at)
+download_tickets (id, order_id, token, expires_at, max_uses, used_count)
+
+-- Blockchain integration
+story_transactions (id, dataset_id, ip_id, tx_hash, license_terms, created_at)
+
+-- AI analysis
+datasets (
+  ... base fields ...,
+  vertex_ai_story TEXT,
+  vertex_ai_caption TEXT,
+  vertex_ai_tags TEXT[],
+  vertex_ai_confidence DECIMAL,
+  vertex_ai_status VARCHAR
+)
+```
+
+### Firebase Collections
+
+```json
+{
+  "users": {
+    "userId": {
+      "walletAddress": "0x...",
+      "username": "creator1",
+      "avatar": "ipfs://...",
+      "createdAt": 1234567890
+    }
+  },
+  "images": {
+    "datasetId": {
+      "url": "ipfs://...",
+      "title": "Climate Dataset",
+      "preview": "ipfs://..."
+    }
+  },
+  "stories": {
+    "datasetId": {
+      "cinemaricStory": "A tale of...",
+      "tags": ["climate", "weather"],
+      "generatedAt": 1234567890
+    }
+  },
+  "metadata": {
+    "datasetId": {
+      "searchEmbedding": [0.1, 0.2, ...],
+      "views": 150,
+      "ratings": 4.8
+    }
+  }
+}
+```
 
 ---
 
-## 📁 Project Structure
+## Key Features Explained
+
+### 1. Intelligent Upload
+**File:** `/components/dataset-upload-form.tsx` → `/app/api/datasets/route.ts`
+
+1. User uploads dataset with preview image
+2. File → IPFS (returns content hash)
+3. Image → Vertex AI (generates story, tags, captions)
+4. Metadata → PostgreSQL + Firebase
+5. Results displayed immediately
+
+### 2. Smart Search & Discovery
+**Files:** `/app/api/search/nlp-query/route.ts`, `/lib/nlp-utils.ts`
+
+- Natural language input: "Show me climate datasets with machine learning models"
+- NLP parsing → Extract entities ("climate", "ML")
+- Tag matching → Filter by semantic similarity
+- Ranking → Sort by relevance + popularity
+- Results include recommendations
+
+### 3. On-Chain IP Registration
+**Files:** `/lib/story-protocol.ts`, `/app/api/story/register/route.ts`
+
+1. Creator clicks "Register IP"
+2. System calls Story Protocol's `registerIpAsset()`
+3. Returns IP ID (immutable proof of creation)
+4. Creator can now create licenses with royalty splits
+5. License deployed to Story Aeneid testnet
+
+### 4. Secure Payments & Downloads
+**Files:** `/lib/contract-utils.ts`, `/app/api/download/route.ts`
+
+1. User clicks "Purchase" (connects MetaMask)
+2. Smart contract executes: transfers 0.001 IP
+3. Transaction verified on-chain (Story Aeneid)
+4. One-time download link generated (hash + expiry)
+5. File served from IPFS with time limit
+
+### 5. Creator Dashboard
+**File:** `/app/admin/page.tsx`
+
+- View all uploaded datasets + analysis status
+- Monitor Vertex AI processing (stories, tags, confidence)
+- See purchase history + earnings
+- Download usage reports
+- Test new uploads with admin tools
+
+---
+
+## Data Flow Examples
+
+### Example 1: Creator Uploads Dataset
+```
+Creator → Upload Form (title, image, description)
+        ↓
+   IPFS API (upload file) → returns CID
+        ↓
+   Vertex AI API (analyze image) → returns {story, tags, caption, score}
+        ↓
+   PostgreSQL + Firebase (save metadata)
+        ↓
+   Display in /explore with Vertex AI analysis
+```
+
+### Example 2: User Searches with NLP
+```
+User → Search Bar: "medical AI datasets with >90% accuracy"
+       ↓
+   NLP Parse API → extracts {intent: "search", entities: ["medical", "AI"], quality: ">90%"}
+       ↓
+   Filter Datasets → where tags contain "medical" AND "AI" AND rating > 90
+       ↓
+   Semantic Ranking → use Vertex AI embeddings to rank by relevance
+       ↓
+   Display Results + Recommendations
+```
+
+### Example 3: User Purchases Dataset
+```
+User → Click "Purchase" → MetaMask connects
+       ↓
+   /api/purchase calls executePurchase()
+       ↓
+   Smart Contract → transfers 0.001 IP to creator
+       ↓
+   Transaction verified on Story Aeneid testnet
+       ↓
+   Database creates download_ticket (hash, expiry=10min, uses=3)
+       ↓
+   /api/download serves IPFS file with one-time link
+       ↓
+   Creator earns 0.001 IP (auto-distributed if co-creators)
+```
+
+---
+
+## Environment Variables
+
+Create `.env.local`:
+
+```bash
+# Firebase
+FIREBASE_API_KEY=your_api_key
+FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_STORAGE_BUCKET=your_bucket.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_APP_ID=your_app_id
+
+# Google Cloud (Vertex AI)
+GOOGLE_CLOUD_PROJECT_ID=your_project_id
+GOOGLE_CLOUD_REGION=us-central1
+
+# Blockchain (Story Protocol)
+STORY_AENEID_RPC=https://aeneid-rpc.story.foundation
+STORY_AENEID_CHAIN_ID=1513
+
+# Database
+DATABASE_URL=postgresql://user:password@host/db
+NEON_API_KEY=your_neon_key
+
+# Vercel
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+```
+
+---
+
+## Installation & Setup
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/yourname/ipx-market.git
+cd ipx-market
+npm install
+```
+
+### 2. Configure Environment
+```bash
+cp .env.example .env.local
+# Edit .env.local with your Firebase, GCP, and DB credentials
+```
+
+### 3. Setup Database
+```bash
+# Run migrations
+npm run migrate
+
+# Seed sample data
+npm run seed
+```
+
+### 4. Run Locally
+```bash
+npm run dev
+# Visit http://localhost:3000
+```
+
+### 5. Deploy to Vercel
+```bash
+vercel
+# Follow prompts to connect GitHub repo
+```
+
+---
+
+## Testing the Platform
+
+### Without Blockchain (Dev Mode)
+- Upload datasets → Auto-generates metadata via Vertex AI
+- Mock purchases → Returns fake download links
+- No MetaMask required
+
+### With Blockchain (Testnet Mode)
+1. Install MetaMask browser extension
+2. Add Story Aeneid testnet: https://aeneid-rpc.story.foundation
+3. Get test IP tokens: Story Aeneid faucet
+4. Click "Connect Wallet" → approve MetaMask
+5. Purchase dataset → sign transaction in MetaMask
+6. Download file with one-time link
+
+---
+
+## API Documentation
+
+See [docs/API_REFERENCE.md](docs/API_REFERENCE.md) for full endpoint documentation.
+
+**Quick Examples:**
+
+```bash
+# Upload dataset (returns ipfs_hash + vertex_ai analysis)
+POST /api/datasets
+{
+  "title": "Climate Data",
+  "description": "Global temperature records",
+  "preview_url": "ipfs://Qm...",
+  "owner_id": "0x123...",
+  "price": "0.001"
+}
+
+# Search with NLP
+POST /api/search/nlp-query
+{
+  "query": "machine learning datasets for medical imaging"
+}
+
+# Get recommendations
+GET /api/search/recommendations?dataset_id=123
+
+# Purchase dataset
+POST /api/purchase
+{
+  "dataset_id": 123,
+  "buyer_address": "0x456..."
+}
+
+# Generate download link
+GET /api/download?tx_hash=0x789...&dataset_id=123
+```
+
+---
+
+## Documentation
+
+- **[System Architecture](docs/SYSTEM_ARCHITECTURE.md)**
+- **[API Reference](docs/API_REFERENCE.md)**
+- **[Vertex AI Integration](docs/VERTEX_AI_INTEGRATION.md)**
+- **[Firebase Firestore Integration](docs/FIRESTORE_INTEGRATION.md)**
+- **[NLP Integration](docs/NLP_INTEGRATION.md)**
+- **[Hackathon Pitch](HACKATHON_PITCH.md)**
+
+---
+
+## Project Structure
 
 ```
 ipx-market/
-├── app/
-│   ├── api/                    # All API endpoints
-│   │   ├── datasets/          # Dataset CRUD + NLP analysis
-│   │   ├── models/            # Model CRUD operations
-│   │   ├── ipfs/              # IPFS upload integration
-│   │   ├── analyze/           # Vertex AI image analysis
-│   │   ├── search/            # NLP query + recommendations
-│   │   ├── purchase/          # Purchase transaction logic
-│   │   ├── download/          # One-time download link generation
-│   │   ├── nft/               # NFT minting (Story Protocol)
-│   │   ├── story/             # Story Protocol registration
-│   │   ├── admin/             # Admin analytics endpoints
-│   │   └── orders/            # Order management
-│   ├── layout.tsx             # Root layout with providers
-│   ├── page.tsx               # Landing page
-│   ├── explore/               # Browse datasets/models
-│   ├── upload/                # Creator upload flow
-│   ├── datasets/              # Dataset detail pages
-│   ├── models/                # Model detail pages
-│   ├── order/success/         # Purchase success page
-│   ├── purchases/             # User purchase history
-│   ├── admin/                 # Admin dashboard
-│   └── globals.css            # Tailwind + theme tokens
-├── components/
-│   ├── search-bar.tsx         # Smart search with NLP
-│   ├── purchase-button.tsx    # Purchase trigger + wallet connect
-│   ├── dataset-*              # Dataset-specific components
-│   ├── model-*                # Model-specific components
-│   ├── blockchain/            # Story Protocol components
-│   └── ui/                    # Shadcn/UI components
-├── lib/
-│   ├── web3.tsx               # Wallet connection (MetaMask)
-│   ├── contract-utils.ts      # Smart contract interactions
-│   ├── vertex-ai.ts           # Vertex AI API wrapper
-│   ├── nlp-utils.ts           # NLP analysis functions
-│   ├── firebase.ts            # Firebase initialization
-│   ├── firestore.ts           # Firestore CRUD helpers
-│   ├── db.ts                  # Database utilities
-│   ├── blockchain.ts          # Blockchain helpers
-│   ├── story-protocol.ts      # Story Protocol integration
-│   └── utils.ts               # General utilities
-├── scripts/
+├── app/                          # Next.js app directory
+│   ├── api/                      # 30+ REST endpoints
+│   ├── explore/                  # Browse & search marketplace
+│   ├── datasets/[id]/            # Dataset detail page
+│   ├── upload/                   # Creator upload flows
+│   ├── purchases/                # Purchase history
+│   ├── order/success/            # Checkout confirmation
+│   ├── admin/                    # Analytics dashboard
+│   └── layout.tsx, page.tsx      # Root layout & homepage
+├── components/                   # Reusable React components
+│   ├── dataset-*.tsx             # Dataset-related components
+│   ├── purchase-button.tsx       # Purchase flow
+│   ├── search-bar.tsx            # NLP search interface
+│   ├── blockchain/               # Story Protocol components
+│   └── ui/                       # shadcn/ui components
+├── lib/                          # Utility functions & services
+│   ├── vertex-ai.ts              # Vertex AI API client
+│   ├── nlp-utils.ts              # NLP parsing & similarity
+│   ├── blockchain.ts             # Web3 utilities
+│   ├── web3.tsx                  # MetaMask integration
+│   ├── contract-utils.ts         # Smart contract calls
+│   ├── db.ts                     # Neon PostgreSQL
+│   ├── firestore.ts              # Firebase Firestore
+│   └── story-protocol.ts         # Story Protocol wrapper
+├── scripts/                      # Database migrations & seeds
 │   ├── 001_create_database_schema.sql
 │   ├── 009_add_vertex_ai_columns.sql
-│   └── ...                    # Other migrations
-├── docs/
-│   ├── API_REFERENCE.md       # All 30 API endpoints
+│   └── ...
+├── docs/                         # Documentation
+│   ├── API_REFERENCE.md
 │   ├── VERTEX_AI_INTEGRATION.md
 │   ├── FIRESTORE_INTEGRATION.md
-│   ├── NLP_INTEGRATION.md
-│   └── ...
-├── public/                    # Static assets
+│   └── NLP_INTEGRATION.md
+├── public/                       # Static assets
 ├── package.json
-├── next.config.mjs
 ├── tsconfig.json
-└── README.md                  # This file
+├── next.config.mjs
+├── tailwind.config.mjs
+└── README.md (this file)
 ```
 
 ---
 
-## 🔧 Installation & Setup
+## Key Integrations
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- MetaMask browser extension
-- Neon PostgreSQL account (optional - Firebase works as fallback)
+### Story Protocol (IP Registration)
+- **Purpose:** Permanent, on-chain proof of dataset ownership
+- **Implementation:** `/lib/story-protocol.ts`
+- **Testnet:** Story Aeneid
+- **Docs:** https://story.foundation
 
-### Local Development
+### Google Vertex AI (AI/NLP)
+- **Purpose:** Auto-generate metadata + intelligent search
+- **Implementation:** `/lib/vertex-ai.ts`, `/lib/nlp-utils.ts`
+- **Models:** Gemini Vision (images), Gemini Text (NLP)
+- **Docs:** https://cloud.google.com/vertex-ai
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/ipx-market.git
-   cd ipx-market
-   ```
+### Firebase Firestore (Metadata Backup)
+- **Purpose:** Real-time metadata, global scale backup
+- **Implementation:** `/lib/firestore.ts`
+- **Collections:** users, images, stories, metadata
+- **Docs:** https://firebase.google.com/docs/firestore
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Neon PostgreSQL (Primary Database)
+- **Purpose:** Relational data (datasets, users, orders)
+- **Implementation:** `/lib/db.ts`
+- **Features:** Full-text search, RLS, serverless
+- **Docs:** https://neon.tech
 
-3. **Setup environment variables** (`.env.local`)
-   ```env
-   # Database (Neon)
-   DATABASE_URL=postgresql://...
-   
-   # Firebase
-   FIREBASE_PROJECT_ID=your-project-id
-   FIREBASE_PRIVATE_KEY=...
-   FIREBASE_CLIENT_EMAIL=...
-   
-   # Vertex AI
-   GOOGLE_CLOUD_PROJECT_ID=...
-   GOOGLE_APPLICATION_CREDENTIALS=...
-   
-   # Blockchain
-   NEXT_PUBLIC_CHAIN_ID=11155111  # Sepolia testnet
-   NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
-   
-   # IPFS/Storage
-   NEXT_PUBLIC_IPFS_GATEWAY=https://gateway.pinata.cloud
-   
-   # App
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
-   ```
-
-4. **Run migrations** (if using Neon)
-   ```bash
-   psql $DATABASE_URL < scripts/001_create_database_schema.sql
-   ```
-
-5. **Start dev server**
-   ```bash
-   npm run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000)
+### IPFS (File Storage)
+- **Purpose:** Decentralized, permanent file hosting
+- **Implementation:** `/app/api/ipfs/upload/route.ts`
+- **Pinning:** Automatic via Pinata/Filecoin
+- **Docs:** https://ipfs.io
 
 ---
 
-## 📚 API Documentation
+## Performance Optimizations
 
-See [docs/API_REFERENCE.md](docs/API_REFERENCE.md) for complete endpoint documentation (30+ endpoints organized by category):
-
-- **Datasets API** - CRUD operations + NLP analysis
-- **Purchase API** - Transaction handling + order creation
-- **Search API** - NLP-powered intelligent discovery
-- **Blockchain API** - Story Protocol + NFT operations
-- **Admin API** - Analytics and testing tools
-
-### Example API Calls
-
-```bash
-# Upload a dataset
-curl -X POST http://localhost:3000/api/datasets \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Weather Dataset","description":"Global climate data","category":"climate"}'
-
-# Search using NLP
-curl "http://localhost:3000/api/search/nlp-query?query=climate+datasets"
-
-# Get recommendations for a dataset
-curl "http://localhost:3000/api/search/recommendations?datasetId=123&limit=5"
-```
+- **Next.js Image Optimization:** Automatic image resizing
+- **SWR Caching:** Client-side data caching with revalidation
+- **Database Indexing:** Full-text search on `title`, `description`, `tags`
+- **IPFS Caching:** Content-addressed, distributed caching
+- **Vertex AI Batch Processing:** Analyze multiple uploads in parallel
+- **Lazy Loading:** Components load on demand
 
 ---
 
-## 🔐 Security Features
+## Security Features
 
-- **Blockchain Verification** - All purchases verified on-chain via transaction hash
-- **One-Time Download Links** - 10-minute expiration, max 3 uses per order
-- **Firestore Security Rules** - User data isolated by UID
-- **SQL Injection Prevention** - Parameterized queries throughout
-- **CORS Protection** - Configured on all API endpoints
-- **Input Validation** - Zod schema validation on all requests
-
----
-
-## 📊 Database Schema Highlights
-
-### Core Tables (Neon)
-- **datasets** - Creator uploaded datasets with IPFS links, preview images
-- **models** - AI/ML models with metadata
-- **users** - User profiles and blockchain addresses
-- **orders** - Purchase records (blockchain TX hash as source of truth)
-- **download_tickets** - One-time download link tokens
-- **story_assets** - Story Protocol IP asset registry
-
-### Firestore Collections
-- **users** - User profiles and preferences
-- **images** - Image metadata and Vertex AI analysis results
-- **stories** - Generated narratives from Vertex AI
-- **metadata** - Custom asset metadata
+- **Blockchain Verification:** On-chain proof of ownership & transactions
+- **One-Time Download Links:** Token-based access with expiry
+- **RLS (Row-Level Security):** Database-level access control
+- **Input Validation:** Zod schemas for all API inputs
+- **HTTPS Only:** Vercel TLS certificates
+- **Environment Variables:** Sensitive data never in code
+- **IPFS Content Hashing:** File integrity verification
 
 ---
 
-## 🧪 Testing & Debugging
+## Future Roadmap
 
-### Admin Testing Dashboard
-Access at `/admin` to:
-- View all Vertex AI image analyses
-- Test NLP search functionality manually
-- Monitor dataset analysis results
-- Verify Firebase Firestore data
+### Q1 2025
+- [ ] AI Model Registration (extend IP registration to ML models)
+- [ ] Advanced Filtering (filter by license type, quality score, price range)
 
-### Debug Logs
-The app includes console debug statements with `[v0]` prefix:
-```javascript
-console.log("[v0] Purchase completed:", txHash);
-console.log("[v0] NLP analysis results:", { tags, story, caption });
-```
+### Q2 2025
+- [ ] Pay-Per-Use APIs (access datasets via REST API with per-query billing)
+- [ ] Creator Analytics Dashboard (comprehensive usage & revenue tracking)
 
----
+### Q3 2025
+- [ ] Plagiarism Detection (scan internet for unauthorized dataset copies)
+- [ ] Royalty Tracking (trace all derivative works back to originals)
 
-## 🚢 Deployment
+### Q4 2025
+- [ ] Cross-Chain Support (Ethereum, Polygon, Arbitrum mainnet)
+- [ ] DAO Governance (community votes on platform features & fees)
 
-### Vercel (Recommended)
-```bash
-# Push to GitHub, connect to Vercel
-# Auto-deploys on push to main
-```
-
-### Environment Variables on Vercel
-Set all `.env.local` variables in Vercel project settings under "Environment Variables".
+### 2026
+- [ ] Global Scale (1M+ datasets, 100K+ creators)
+- [ ] Mobile App (iOS/Android native)
 
 ---
 
-## 📄 Documentation
+## Contributing
 
-- [API Reference](docs/API_REFERENCE.md) - All endpoints with examples
-- [Vertex AI Integration](docs/VERTEX_AI_INTEGRATION.md) - Image analysis & NLP
-- [Firebase/Firestore Setup](docs/FIRESTORE_INTEGRATION.md) - Database integration
-- [NLP Features](docs/NLP_INTEGRATION.md) - Natural language search & recommendations
-- [Hackathon Pitch](HACKATHON_PITCH.md) - Project overview for judges
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
----
-
-## 🤝 Contributing
-
-1. Create feature branch: `git checkout -b feature/amazing-feature`
-2. Commit changes: `git commit -m 'Add amazing feature'`
-3. Push to branch: `git push origin feature/amazing-feature`
-4. Open Pull Request
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ---
 
-## 📜 License
+## License
 
-MIT License - See LICENSE file for details
-
----
-
-## 👥 Team
-
-Built with ❤️ for hackathon submission.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🆘 Support
+## Support & Contact
 
-For issues or questions:
-1. Check [docs/](docs/) for detailed documentation
-2. Review [docs/API_REFERENCE.md](docs/API_REFERENCE.md) for API help
-3. Access `/admin` dashboard for debugging
-4. Open an issue on GitHub
+- **Discord:** [IPX Market Community](https://discord.gg/ipxmarket)
+- **Email:** support@ipxmarket.com
+- **Twitter:** [@IPXMarket](https://twitter.com/ipxmarket)
+- **Docs:** https://docs.ipxmarket.com
 
 ---
 
-**Live Demo:** [https://v0-storypixmarket-an.vercel.app](https://v0-storypixmarket-an.vercel.app)  
-**Built with:** Next.js | Tailwind CSS | Story Protocol | Vertex AI | Neon PostgreSQL
+## Acknowledgments
+
+Built with:
+- Story Protocol for IP registration
+- Google Cloud Vertex AI for intelligent analysis
+- Neon for serverless PostgreSQL
+- Firebase for global metadata sync
+- IPFS for decentralized storage
+- Next.js 16 for production-ready framework
+- shadcn/ui for beautiful components
+
+---
+
+**Made with ❤️ by the IPX Market Team**

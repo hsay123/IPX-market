@@ -675,4 +675,3 @@ Built with:
 
 ---
 
-**Made with ❤️ by the IPX Market Team**

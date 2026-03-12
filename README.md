@@ -80,8 +80,9 @@
 └────────┘  └────────────┘ └──────────┘ └──────────┘
 
 
-![System Architecture](Aritecturee.png)
-
+<div align="center">
+  <img src="Aritecturee.png" width="800" alt="System Architecture"/>
+</div>
 
 
 

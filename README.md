@@ -80,20 +80,10 @@
 └────────┘  └────────────┘ └──────────┘ └──────────┘
 
 
-                        DATA FLOW DIAGRAM
+![System Architecture](Aritecturee.png)
 
-Creator Upload Flow:
-    Upload Form → IPFS Upload → Vertex AI Analysis → Firebase Save → 
-    Story IP Register → Display on Marketplace
 
-Buyer Purchase Flow:
-    Browse/Search → Add to Cart → MetaMask Connect → 
-    Smart Contract Execute → Blockchain Verify → Generate Download Link
 
-Recommendation Engine:
-    User Views → Log Behavior → NLP Analysis of Tags → 
-    Semantic Similarity Calculate → Fetch Similar Items
-```
 
 ### Architecture Layers
 

@@ -1,4 +1,3 @@
-
 # IPX Market: Decentralized AI Dataset Marketplace
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://v0-storypixmarket-an.vercel.app)
@@ -78,13 +77,13 @@
 │        │  │ Payments)  │ │ Search)  │ │ Image    │
 │        │  │            │ │          │ │ Analysis)│
 └────────┘  └────────────┘ └──────────┘ └──────────┘
-
+```
 
 <div align="center">
   <img src="Aritecturee.png" width="800" alt="System Architecture"/>
 </div>
 
-
+---
 
 ### Architecture Layers
 
@@ -665,4 +664,3 @@ Built with:
 - shadcn/ui for beautiful components
 
 ---
-
